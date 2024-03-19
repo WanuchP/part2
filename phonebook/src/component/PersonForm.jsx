@@ -1,6 +1,6 @@
 import service from '../services/persons.js'
 
-const PersonForm = ({newName, setNewName, newNumber, setNewNumber, persons, setPersons}) => {
+const PersonForm = ({newName, setNewName, newNumber, setNewNumber, persons, setPersons, message, setMessage}) => {
 
     const addPerson = (event) => {
         event.preventDefault()
@@ -15,6 +15,10 @@ const PersonForm = ({newName, setNewName, newNumber, setNewNumber, persons, setP
                     setPersons(persons.concat(returnPerson))
                     setNewName('')
                     setNewNumber('')
+                    setMessage(`Added ${returnPerson.name}`)
+                    setTimeout(() => {
+                        setMessage(null)
+                    }, 5000)
                 })
                 .catch(error => {
                     console.log(error)
@@ -26,9 +30,17 @@ const PersonForm = ({newName, setNewName, newNumber, setNewNumber, persons, setP
                         setPersons(persons.map(p => p.id !== returnPerson.id ? p : returnPerson))
                         setNewName('')
                         setNewNumber('')
+                        setMessage(`Updated ${personObj.name} number`)
+                        setTimeout(() => {
+                            setMessage(null)
+                        }, 5000)
                     })
                     .catch(error => {
                     console.log(error)
+                    setMessage(`Information of ${personObj.name} has already been removed from server`)
+                    setTimeout(() => {
+                        setMessage(null)
+                    }, 5000)
                     })
             }
         }
