@@ -1,18 +1,36 @@
+import service from '../services/persons.js'
+
 const PersonForm = ({newName, setNewName, newNumber, setNewNumber, persons, setPersons}) => {
 
     const addPerson = (event) => {
         event.preventDefault()
         const personObj = {
             name: newName,
-            number: newNumber,
-            id: persons.length+1,
+            number: newNumber
         }
-        if (persons.map(person=>person.name).indexOf(personObj.name) === -1) {
-            setPersons(persons.concat(personObj))
-            setNewName('')
-            setNewNumber('')
+        const ind = persons.map(person=>person.name).indexOf(personObj.name)
+        if (ind  === -1) {
+            service
+                .create(personObj).then(returnPerson => {
+                    setPersons(persons.concat(returnPerson))
+                    setNewName('')
+                    setNewNumber('')
+                })
+                .catch(error => {
+                    console.log(error)
+                })
         } else {
-            alert(`${personObj.name} is already added to phonebook`)
+            if (window.confirm(`${personObj.name} is already added to phonebook, replace the old number with a new one?`)) {
+                service
+                    .update(persons[ind].id, personObj).then(returnPerson =>{
+                        setPersons(persons.map(p => p.id !== returnPerson.id ? p : returnPerson))
+                        setNewName('')
+                        setNewNumber('')
+                    })
+                    .catch(error => {
+                    console.log(error)
+                    })
+            }
         }
     }
 
